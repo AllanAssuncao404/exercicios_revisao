@@ -1,0 +1,138 @@
+@startuml SistemaLanchonete
+
+' Estilos
+skinparam classAttributeIconSize 0
+skinparam classFontSize 10
+skinparam classFontStyle bold
+
+' Classe principal do sistema
+class SistemaLanchonete {
+    - scanner: Scanner
+    + SistemaLanchonete()
+    + executar(): void
+    - exibirMenu(): void
+    - criarPizza(): Pizza
+    - criarLanche(): Lanche
+    - criarSalgadinho(): Salgadinho
+    - criarPedido(): void
+    - processarPagamento(pedido: Pedido): void
+    + main(args: String[]): void
+}
+
+' Hierarquia de Pratos
+abstract class Prato {
+    # precoVenda: double
+    # dataValidade: LocalDate
+    # peso: double
+    + Prato(precoVenda: double, dataValidade: LocalDate, peso: double)
+    + {abstract} getDescricao(): String
+    + isValido(): boolean
+    + getPrecoVenda(): double
+    + getDataValidade(): LocalDate
+    + getPeso(): double
+    + setPrecoVenda(precoVenda: double): void
+    + setDataValidade(dataValidade: LocalDate): void
+    + setPeso(peso: double): void
+    + toString(): String
+}
+
+class Pizza {
+    - recheio: String
+    - borda: String
+    - molho: String
+    - bordaRecheada: boolean
+    + Pizza(precoVenda: double, dataValidade: LocalDate, peso: double, recheio: String, borda: String, molho: String, bordaRecheada: boolean)
+    + getDescricao(): String
+    + getRecheio(): String
+    + getBorda(): String
+    + getMolho(): String
+    + isBordaRecheada(): boolean
+    + setRecheio(recheio: String): void
+    + setBorda(borda: String): void
+    + setMolho(molho: String): void
+    + setBordaRecheada(bordaRecheada: boolean): void
+    + toString(): String
+}
+
+class Lanche {
+    - tipoPao: String
+    - recheio: String
+    - molhos: List<String>
+    + Lanche(precoVenda: double, dataValidade: LocalDate, peso: double, tipoPao: String, recheio: String, molhos: List<String>)
+    + getDescricao(): String
+    + getTipoPao(): String
+    + getRecheio(): String
+    + getMolhos(): List<String>
+    + setTipoPao(tipoPao: String): void
+    + setRecheio(recheio: String): void
+    + setMolhos(molhos: List<String>): void
+    + adicionarMolho(molho: String): void
+    + toString(): String
+}
+
+class Salgadinho {
+    - tipo: String
+    - massa: String
+    - recheio: String
+    + Salgadinho(precoVenda: double, dataValidade: LocalDate, peso: double, tipo: String, massa: String, recheio: String)
+    + getDescricao(): String
+    + getTipo(): String
+    + getMassa(): String
+    + getRecheio(): String
+    + setTipo(tipo: String): void
+    + setMassa(massa: String): void
+    + setRecheio(recheio: String): void
+    + toString(): String
+}
+
+' Classe Pedido
+class Pedido {
+    - nomeCliente: String
+    - pratos: List<Prato>
+    - taxaServico: double
+    - dataPedido: LocalDateTime
+    + Pedido(nomeCliente: String, taxaServico: double)
+    + adicionarPrato(prato: Prato): void
+    + removerPrato(prato: Prato): void
+    + calcularSubtotal(): double
+    + calcularTaxaServico(): double
+    + calcularTotal(): double
+    + getNomeCliente(): String
+    + getPratos(): List<Prato>
+    + getTaxaServico(): double
+    + getDataPedido(): LocalDateTime
+    + setNomeCliente(nomeCliente: String): void
+    + setTaxaServico(taxaServico: double): void
+    + toString(): String
+}
+
+' Classe NotaFiscal
+class NotaFiscal {
+    - pedido: Pedido
+    - numeroNota: String
+    - dataEmissao: LocalDateTime
+    + NotaFiscal(pedido: Pedido)
+    + gerarNota(): String
+    + calcularTroco(valorPago: double): double
+    + getPedido(): Pedido
+    + getNumeroNota(): String
+    + getDataEmissao(): LocalDateTime
+    - gerarNumeroNota(): String
+    + toString(): String
+}
+
+' Relacionamentos
+SistemaLanchonete ..> Pedido : cria
+SistemaLanchonete ..> Pizza : cria
+SistemaLanchonete ..> Lanche : cria
+SistemaLanchonete ..> Salgadinho : cria
+SistemaLanchonete ..> NotaFiscal : usa
+
+Pedido ||--o{ Prato : contém
+NotaFiscal ||--|| Pedido : gera para
+
+Prato <|-- Pizza
+Prato <|-- Lanche
+Prato <|-- Salgadinho
+
+@enduml
